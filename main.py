@@ -9,7 +9,7 @@ def get_image_files(folder_path):
     return [file for file in os.listdir(folder_path) if file.lower().endswith(SUPPORTED_FORMATS)]
 
 def main():
-    st.title("🎲 好椅子日記")
+    st.title("🪑泡泡 × 經典名椅系列")
     img_folder = "img"
 
     if not os.path.exists(img_folder):
