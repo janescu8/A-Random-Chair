@@ -83,7 +83,7 @@ def main():
 
         <div id="pauseOptions" style="margin-top: 20px; display:none;">
             <button class="pretty-button" onclick="downloadImage()">⬇️ 下載這張圖片</button>
-            <button class="pretty-button" onclick="resumeSlideshow()">🔄 繼續玩</button>
+            <button class="pretty-button" onclick="goToHome()">🏠 回到首頁重新開始</button>
         </div>
 
         <!-- 音樂與音效 -->
@@ -132,19 +132,15 @@ def main():
             intervalId = null;
         }}
 
-        function resumeSlideshow() {{
-            pauseOptions.style.display = "none";
-            intervalId = setInterval(() => {{
-                index = (index + 1) % images.length;
-                showImage();
-            }}, 100);
-        }}
-
         function downloadImage() {{
             if (!isMuted) {{
                 downloadSound.play();
             }}
             downloadLink.click();
+        }}
+
+        function goToHome() {{
+            location.reload();
         }}
 
         img.addEventListener("click", () => {{
