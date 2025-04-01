@@ -13,6 +13,7 @@ def encode_image_to_base64(image_path):
         return base64.b64encode(img_file.read()).decode("utf-8")
 
 def main():
+    st.set_page_config(page_title="經典名椅互動畫展", layout="centered")
     st.title("🪑 經典名椅互動畫展")
 
     img_folder = "img"
@@ -34,16 +35,37 @@ def main():
     image_names = image_files
 
     st.components.v1.html(f"""
+    <style>
+        .pretty-button {{
+            padding: 15px 30px;
+            font-size: 20px;
+            background-color: #4a4a8a;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }}
+        .pretty-button:hover {{
+            background-color: #3c3c75;
+            transform: scale(1.05);
+        }}
+        #slideshow {{
+            margin-top: 20px;
+        }}
+    </style>
+
     <div style="text-align:center;">
         <div id="startSection">
-            <button onclick="startSlideshow()" style="padding:15px 30px; font-size:20px;">🎮 開始玩</button>
+            <button class="pretty-button" onclick="startSlideshow()">🎮 開始玩</button>
         </div>
 
         <img id="slideshow" src="" style="max-width: 90%; max-height: 80vh; border-radius: 8px; cursor: pointer; display: none;" />
         <a id="downloadLink" download style="display:none;"></a>
 
         <div id="continueSection" style="margin-top: 20px; display:none;">
-            <button onclick="resumeSlideshow()" style="padding:10px 20px; font-size:16px;">🔄 繼續玩</button>
+            <button class="pretty-button" onclick="resumeSlideshow()">🔄 繼續玩</button>
         </div>
     </div>
 
@@ -71,7 +93,7 @@ def main():
             intervalId = setInterval(() => {{
                 index = (index + 1) % images.length;
                 showImage();
-            }}, 200);
+            }}, 100);  // 每 0.1 秒切換
         }}
 
         function stopSlideshow() {{
@@ -84,7 +106,7 @@ def main():
             intervalId = setInterval(() => {{
                 index = (index + 1) % images.length;
                 showImage();
-            }}, 200);
+            }}, 100);
         }}
 
         img.addEventListener("click", () => {{
