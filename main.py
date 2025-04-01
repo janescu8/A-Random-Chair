@@ -13,7 +13,7 @@ def encode_image_to_base64(image_path):
         return base64.b64encode(img_file.read()).decode("utf-8")
 
 def main():
-    st.title("🖼️ 經典名椅互動畫展")
+    st.title("🪑 經典名椅互動畫展")
 
     img_folder = "img"
     if not os.path.exists(img_folder):
@@ -25,50 +25,67 @@ def main():
         st.warning("沒有找到任何圖片")
         return
 
-    # 隨機順序排列
     random.shuffle(image_files)
 
-    # 將所有圖片轉 base64 給前端用 JS 播放
     images_base64 = [
         f"data:image/{img.split('.')[-1]};base64,{encode_image_to_base64(os.path.join(img_folder, img))}"
         for img in image_files
     ]
+    image_names = image_files
 
-    image_names = image_files  # 保留原始檔名對應
-
-    # 傳到 HTML 中播放 + 下載功能
     st.components.v1.html(f"""
-    <div style="text-align: center;">
+    <div style="text-align:center;">
         <img id="slideshow" src="" style="max-width: 90%; max-height: 80vh; border-radius: 8px; cursor: pointer;" />
         <br/>
-        <a id="downloadLink" download style="display: inline-block; margin-top: 10px; font-size: 1.1em;">⬇️ 下載目前圖片</a>
+        <a id="downloadLink" download style="display:none;"></a>
+        <div id="continueSection" style="margin-top: 20px; display:none;">
+            <button onclick="resumeSlideshow()" style="padding:10px 20px; font-size:16px;">🔄 繼續玩</button>
+        </div>
     </div>
     <script>
         const images = {images_base64};
-        const imageNames = {image_names};
+        const names = {image_names};
         let index = 0;
-        const imgTag = document.getElementById("slideshow");
-        const downloadLink = document.getElementById("downloadLink");
+        let intervalId = null;
 
-        function updateImage() {{
-            imgTag.src = images[index];
+        const img = document.getElementById("slideshow");
+        const downloadLink = document.getElementById("downloadLink");
+        const continueSection = document.getElementById("continueSection");
+
+        function showImage() {{
+            img.src = images[index];
             downloadLink.href = images[index];
-            downloadLink.download = imageNames[index];
-            index = (index + 1) % images.length;
+            downloadLink.download = names[index];
         }}
 
-        // 每 200ms 換一張圖
-        setInterval(updateImage, 200);
+        function startSlideshow() {{
+            intervalId = setInterval(() => {{
+                index = (index + 1) % images.length;
+                showImage();
+            }}, 200);
+        }}
 
-        // 點圖片就觸發下載
-        imgTag.addEventListener("click", () => {{
+        function stopSlideshow() {{
+            clearInterval(intervalId);
+            intervalId = null;
+        }}
+
+        function resumeSlideshow() {{
+            continueSection.style.display = "none";
+            startSlideshow();
+        }}
+
+        img.addEventListener("click", () => {{
+            stopSlideshow();
             downloadLink.click();
+            continueSection.style.display = "block";
         }});
 
         // 初始化
-        updateImage();
+        showImage();
+        startSlideshow();
     </script>
-    """, height=600)
+    """, height=650)
 
 if __name__ == "__main__":
     main()
