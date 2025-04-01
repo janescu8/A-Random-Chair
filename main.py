@@ -13,8 +13,8 @@ def encode_image_to_base64(image_path):
         return base64.b64encode(img_file.read()).decode("utf-8")
 
 def main():
-    st.set_page_config(page_title="北歐現代畫展", layout="centered")
-    st.title("🌿 北歐現代｜經典名椅互動畫展")
+    st.set_page_config(page_title="經典名椅互動畫展", layout="centered")
+    st.title("🌿 經典名椅互動畫展")
 
     img_folder = "img"
     if not os.path.exists(img_folder):
