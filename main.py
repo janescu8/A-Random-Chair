@@ -8,32 +8,40 @@ SUPPORTED_FORMATS = ('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp')
 def get_image_files(folder_path):
     return [file for file in os.listdir(folder_path) if file.lower().endswith(SUPPORTED_FORMATS)]
 
-def encode_image_to_base64(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode("utf-8")
+def encode_file_base64(file_path):
+    with open(file_path, "rb") as f:
+        return base64.b64encode(f.read()).decode("utf-8")
 
 def main():
-    st.set_page_config(page_title="經典名椅互動畫展", layout="centered")
-    st.title("🌿 經典名椅互動畫展")
+    st.set_page_config(page_title="北歐現代畫展", layout="centered")
+    st.title("🌿 北歐現代｜經典名椅互動畫展")
 
     img_folder = "img"
-    if not os.path.exists(img_folder):
-        st.error("找不到圖片資料夾")
+    sound_folder = "static/sounds"
+
+    if not os.path.exists(img_folder) or not os.path.exists(sound_folder):
+        st.error("找不到圖片或音效資料夾")
         return
 
     image_files = get_image_files(img_folder)
     if not image_files:
-        st.warning("沒有找到任何圖片")
+        st.warning("沒有圖片可以顯示")
         return
 
     random.shuffle(image_files)
 
     images_base64 = [
-        f"data:image/{img.split('.')[-1]};base64,{encode_image_to_base64(os.path.join(img_folder, img))}"
+        f"data:image/{img.split('.')[-1]};base64,{encode_file_base64(os.path.join(img_folder, img))}"
         for img in image_files
     ]
     image_names = image_files
 
+    # 音效 base64 轉換
+    bgm_data = encode_file_base64(os.path.join(sound_folder, "bgm.mp3"))
+    click_data = encode_file_base64(os.path.join(sound_folder, "click.mp3"))
+    download_data = encode_file_base64(os.path.join(sound_folder, "download.mp3"))
+
+    # 前端 HTML + JS
     st.components.v1.html(f"""
     <style>
         .pretty-button {{
@@ -79,9 +87,9 @@ def main():
         </div>
 
         <!-- 音樂與音效 -->
-        <audio id="bgm" src="/static/sounds/bgm.mp3" loop></audio>
-        <audio id="clickSound" src="/static/sounds/click.mp3"></audio>
-        <audio id="downloadSound" src="/static/sounds/download.mp3"></audio>
+        <audio id="bgm" src="data:audio/mp3;base64,{bgm_data}" loop></audio>
+        <audio id="clickSound" src="data:audio/mp3;base64,{click_data}"></audio>
+        <audio id="downloadSound" src="data:audio/mp3;base64,{download_data}"></audio>
     </div>
 
     <script>
