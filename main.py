@@ -38,7 +38,7 @@ def main():
     <style>
         .pretty-button {{
             padding: 15px 30px;
-            font-size: 20px;
+            font-size: 18px;
             background-color: #4a4a8a;
             color: white;
             border: none;
@@ -46,13 +46,11 @@ def main():
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             transition: all 0.3s ease;
+            margin: 10px;
         }}
         .pretty-button:hover {{
             background-color: #3c3c75;
             transform: scale(1.05);
-        }}
-        #slideshow {{
-            margin-top: 20px;
         }}
     </style>
 
@@ -64,7 +62,8 @@ def main():
         <img id="slideshow" src="" style="max-width: 90%; max-height: 80vh; border-radius: 8px; cursor: pointer; display: none;" />
         <a id="downloadLink" download style="display:none;"></a>
 
-        <div id="continueSection" style="margin-top: 20px; display:none;">
+        <div id="pauseOptions" style="margin-top: 20px; display:none;">
+            <button class="pretty-button" onclick="downloadImage()">⬇️ 下載這張圖片</button>
             <button class="pretty-button" onclick="resumeSlideshow()">🔄 繼續玩</button>
         </div>
     </div>
@@ -77,7 +76,7 @@ def main():
 
         const img = document.getElementById("slideshow");
         const downloadLink = document.getElementById("downloadLink");
-        const continueSection = document.getElementById("continueSection");
+        const pauseOptions = document.getElementById("pauseOptions");
         const startSection = document.getElementById("startSection");
 
         function showImage() {{
@@ -93,7 +92,7 @@ def main():
             intervalId = setInterval(() => {{
                 index = (index + 1) % images.length;
                 showImage();
-            }}, 100);  // 每 0.1 秒切換
+            }}, 100);
         }}
 
         function stopSlideshow() {{
@@ -102,20 +101,23 @@ def main():
         }}
 
         function resumeSlideshow() {{
-            continueSection.style.display = "none";
+            pauseOptions.style.display = "none";
             intervalId = setInterval(() => {{
                 index = (index + 1) % images.length;
                 showImage();
             }}, 100);
         }}
 
+        function downloadImage() {{
+            downloadLink.click();
+        }}
+
         img.addEventListener("click", () => {{
             stopSlideshow();
-            downloadLink.click();
-            continueSection.style.display = "block";
+            pauseOptions.style.display = "block";
         }});
     </script>
-    """, height=700)
+    """, height=750)
 
 if __name__ == "__main__":
     main()
