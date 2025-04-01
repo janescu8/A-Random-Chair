@@ -35,13 +35,18 @@ def main():
 
     st.components.v1.html(f"""
     <div style="text-align:center;">
-        <img id="slideshow" src="" style="max-width: 90%; max-height: 80vh; border-radius: 8px; cursor: pointer;" />
-        <br/>
+        <div id="startSection">
+            <button onclick="startSlideshow()" style="padding:15px 30px; font-size:20px;">🎮 開始玩</button>
+        </div>
+
+        <img id="slideshow" src="" style="max-width: 90%; max-height: 80vh; border-radius: 8px; cursor: pointer; display: none;" />
         <a id="downloadLink" download style="display:none;"></a>
+
         <div id="continueSection" style="margin-top: 20px; display:none;">
             <button onclick="resumeSlideshow()" style="padding:10px 20px; font-size:16px;">🔄 繼續玩</button>
         </div>
     </div>
+
     <script>
         const images = {images_base64};
         const names = {image_names};
@@ -51,6 +56,7 @@ def main():
         const img = document.getElementById("slideshow");
         const downloadLink = document.getElementById("downloadLink");
         const continueSection = document.getElementById("continueSection");
+        const startSection = document.getElementById("startSection");
 
         function showImage() {{
             img.src = images[index];
@@ -59,6 +65,9 @@ def main():
         }}
 
         function startSlideshow() {{
+            startSection.style.display = "none";
+            img.style.display = "block";
+            showImage();
             intervalId = setInterval(() => {{
                 index = (index + 1) % images.length;
                 showImage();
@@ -72,7 +81,10 @@ def main():
 
         function resumeSlideshow() {{
             continueSection.style.display = "none";
-            startSlideshow();
+            intervalId = setInterval(() => {{
+                index = (index + 1) % images.length;
+                showImage();
+            }}, 200);
         }}
 
         img.addEventListener("click", () => {{
@@ -80,12 +92,8 @@ def main():
             downloadLink.click();
             continueSection.style.display = "block";
         }});
-
-        // 初始化
-        showImage();
-        startSlideshow();
     </script>
-    """, height=650)
+    """, height=700)
 
 if __name__ == "__main__":
     main()
