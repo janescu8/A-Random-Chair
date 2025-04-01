@@ -13,8 +13,8 @@ def encode_image_to_base64(image_path):
         return base64.b64encode(img_file.read()).decode("utf-8")
 
 def main():
-    st.set_page_config(page_title="經典名椅互動遊戲", layout="centered")
-    st.title("🪑 經典名椅互動畫展")
+    st.set_page_config(page_title="北歐現代畫展", layout="centered")
+    st.title("🌿 北歐現代｜經典名椅互動畫展")
 
     img_folder = "img"
     if not os.path.exists(img_folder):
@@ -52,9 +52,20 @@ def main():
             background-color: #3c3c75;
             transform: scale(1.05);
         }}
+        #muteToggle {{
+            position: fixed;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }}
     </style>
 
     <div style="text-align:center;">
+        <button id="muteToggle" onclick="toggleMute()">🔊</button>
+
         <div id="startSection">
             <button class="pretty-button" onclick="startSlideshow()">🎮 開始玩</button>
         </div>
@@ -66,6 +77,11 @@ def main():
             <button class="pretty-button" onclick="downloadImage()">⬇️ 下載這張圖片</button>
             <button class="pretty-button" onclick="resumeSlideshow()">🔄 繼續玩</button>
         </div>
+
+        <!-- 音樂與音效 -->
+        <audio id="bgm" src="/static/sounds/bgm.mp3" loop></audio>
+        <audio id="clickSound" src="/static/sounds/click.mp3"></audio>
+        <audio id="downloadSound" src="/static/sounds/download.mp3"></audio>
     </div>
 
     <script>
@@ -73,11 +89,16 @@ def main():
         const names = {image_names};
         let index = 0;
         let intervalId = null;
+        let isMuted = false;
 
         const img = document.getElementById("slideshow");
         const downloadLink = document.getElementById("downloadLink");
         const pauseOptions = document.getElementById("pauseOptions");
         const startSection = document.getElementById("startSection");
+        const bgm = document.getElementById("bgm");
+        const clickSound = document.getElementById("clickSound");
+        const downloadSound = document.getElementById("downloadSound");
+        const muteToggle = document.getElementById("muteToggle");
 
         function showImage() {{
             img.src = images[index];
@@ -89,6 +110,9 @@ def main():
             startSection.style.display = "none";
             img.style.display = "block";
             showImage();
+            if (!isMuted) {{
+                bgm.play();
+            }}
             intervalId = setInterval(() => {{
                 index = (index + 1) % images.length;
                 showImage();
@@ -109,13 +133,27 @@ def main():
         }}
 
         function downloadImage() {{
+            if (!isMuted) {{
+                downloadSound.play();
+            }}
             downloadLink.click();
         }}
 
         img.addEventListener("click", () => {{
             stopSlideshow();
             pauseOptions.style.display = "block";
+            if (!isMuted) {{
+                clickSound.play();
+            }}
         }});
+
+        function toggleMute() {{
+            isMuted = !isMuted;
+            bgm.muted = isMuted;
+            clickSound.muted = isMuted;
+            downloadSound.muted = isMuted;
+            muteToggle.innerText = isMuted ? "🔇" : "🔊";
+        }}
     </script>
     """, height=750)
 
